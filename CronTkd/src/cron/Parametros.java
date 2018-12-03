@@ -10,7 +10,16 @@ import entidades.Parameter;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.comm.CommPortIdentifier;
+import javax.comm.NoSuchPortException;
+import javax.comm.PortInUseException;
+import javax.comm.SerialPort;
+import javax.comm.UnsupportedCommOperationException;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.WindowConstants;
@@ -32,6 +41,11 @@ public final class Parametros extends JDialog{
     public String serialEquipamento;
     public String quantidadeRound;
     public List<Parameter> listaParametros;
+    //private CommPortIdentifier com;
+    private CommPortIdentifier com;
+   
+
+    
     
     
     
@@ -47,11 +61,14 @@ public final class Parametros extends JDialog{
      * Creates new form Parametros
      */
     public Parametros() {
+         
         this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         Funcoes funcoes = new Funcoes();
         setListaParametros(funcoes.carregaParametros());
         initComponents();
+        popularPortas();
         List<Parameter> lista ;
+        
         lista = getListaParametros();
         if(lista.size()>0){
             for(int i=0;i<lista.size();i++){
@@ -109,7 +126,21 @@ public final class Parametros extends JDialog{
                 }
             });
     }
+    
+  public void popularPortas() {
+         DefaultComboBoxModel comboModel = (DefaultComboBoxModel) selectCom.getModel();
+        selectCom.removeAllItems();
+        Enumeration<?> portList = CommPortIdentifier.getPortIdentifiers();
+        while (portList.hasMoreElements()) {
+            CommPortIdentifier cpi = (CommPortIdentifier) portList.nextElement();
+            if (cpi.getPortType() == CommPortIdentifier.PORT_SERIAL) {
+                selectCom.addItem(cpi.getName());
 
+            }
+        }
+       
+        
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -140,6 +171,7 @@ public final class Parametros extends JDialog{
         fldMinutosIntervalo = new javax.swing.JTextField();
         fldSegundosRound = new javax.swing.JTextField();
         fldMinutosRound = new javax.swing.JTextField();
+        btnConectar = new javax.swing.JButton();
 
         jCheckBoxMenuItem1.setSelected(true);
         jCheckBoxMenuItem1.setText("jCheckBoxMenuItem1");
@@ -212,6 +244,13 @@ public final class Parametros extends JDialog{
             }
         });
 
+        btnConectar.setText("Conectar");
+        btnConectar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnConectarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -243,10 +282,13 @@ public final class Parametros extends JDialog{
                     .addComponent(fldMinutosIntervalo)
                     .addComponent(fldSegundosRound, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(fldMinutosRound, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(selectCom, javax.swing.GroupLayout.PREFERRED_SIZE, 393, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(selectCom, javax.swing.GroupLayout.PREFERRED_SIZE, 393, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnConectar))
                     .addComponent(fldNumeroSerie, javax.swing.GroupLayout.PREFERRED_SIZE, 393, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(fldNomeEntidade, javax.swing.GroupLayout.PREFERRED_SIZE, 393, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(174, Short.MAX_VALUE))
         );
 
         layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {lblLogo, lblMinIntervalo, lblMinR, lblNomEntidade, lblPortaCom, lblQtdRounds, lblSegIntervalo, lblSegR, lblSerialEquipamento});
@@ -290,9 +332,13 @@ public final class Parametros extends JDialog{
                             .addComponent(lblSerialEquipamento, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(fldNumeroSerie, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(lblPortaCom, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(selectCom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(lblPortaCom, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(selectCom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(btnConectar)
+                                .addGap(16, 16, 16)))))
                 .addGap(55, 55, 55)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnCancelar)
@@ -363,6 +409,47 @@ public final class Parametros extends JDialog{
         this.dispose();
         
     }//GEN-LAST:event_btnSalvarActionPerformed
+public void abrePortaCom() throws NoSuchPortException {
+/*
+* Para a porta ser aberta precisa ter um identificador do tipo da porta, para isso usa-se o método getPortIdentifier("Qual é a porta? COM1, LPT1 ...") da classe CommPortIdentifier.
+* 
+* Tendo feito isso há a necessidade, agora, de instanciar o tipo da porta que foi escolhida, nesse caso a porta serial a qual recebe o identificador juntamente com o método open() que recebe como parâmetro um nome identificador (um título) e o tempo de espera de alguma resposta (timeout).
+* 
+* Estando a porta aberta, configura-se os parâmetros de comunicação serial. 
+*/String porta = selectCom.getSelectedItem().toString();
+
+    com = CommPortIdentifier.getPortIdentifier(porta);
+    
+try{
+    
+   
+       
+   int timeout = 6000;
+   int baudrate = 9600;
+   SerialPort portaSerial = null;
+        try {
+            portaSerial = (SerialPort)com.open("PlacaSensoriamento",timeout);
+        } catch (PortInUseException ex) {
+            Logger.getLogger(Parametros.class.getName()).log(Level.SEVERE, null, ex);
+        }
+   JOptionPane.showMessageDialog(null, "Configurando Porta Serial");
+   portaSerial.setSerialPortParams(baudrate, portaSerial.DATABITS_8, portaSerial.STOPBITS_1, portaSerial.PARITY_NONE);
+}
+
+catch (UnsupportedCommOperationException uscoe){
+   System.err.println("Configuração dos parametros da porta não suportada!");
+}
+}
+    
+    
+    
+    private void btnConectarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConectarActionPerformed
+        try {
+            abrePortaCom();
+        } catch (NoSuchPortException ex) {
+            Logger.getLogger(Parametros.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnConectarActionPerformed
 
     
     
@@ -400,6 +487,7 @@ public final class Parametros extends JDialog{
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
+               
                       new Parametros().setVisible(true);
                 
             }
@@ -491,6 +579,7 @@ public final class Parametros extends JDialog{
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancelar;
+    private javax.swing.JButton btnConectar;
     private javax.swing.JButton btnSalvar;
     private javax.swing.JTextField fldMinutosIntervalo;
     private javax.swing.JTextField fldMinutosRound;

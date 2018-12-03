@@ -70,11 +70,15 @@
                   <Component id="fldMinutosIntervalo" linkSize="4" alignment="0" max="32767" attributes="0"/>
                   <Component id="fldSegundosRound" linkSize="4" min="-2" max="-2" attributes="0"/>
                   <Component id="fldMinutosRound" linkSize="4" alignment="0" min="-2" pref="50" max="-2" attributes="0"/>
-                  <Component id="selectCom" min="-2" pref="393" max="-2" attributes="0"/>
+                  <Group type="102" attributes="0">
+                      <Component id="selectCom" min="-2" pref="393" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Component id="btnConectar" min="-2" max="-2" attributes="0"/>
+                  </Group>
                   <Component id="fldNumeroSerie" min="-2" pref="393" max="-2" attributes="0"/>
                   <Component id="fldNomeEntidade" min="-2" pref="393" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace max="32767" attributes="0"/>
+              <EmptySpace pref="174" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -121,10 +125,16 @@
                           <Component id="lblSerialEquipamento" linkSize="5" alignment="3" min="-2" pref="29" max="-2" attributes="0"/>
                           <Component id="fldNumeroSerie" linkSize="5" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace min="-2" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="lblPortaCom" linkSize="3" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
-                          <Component id="selectCom" linkSize="3" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="lblPortaCom" linkSize="3" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
+                              <Component id="selectCom" linkSize="3" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" alignment="1" attributes="0">
+                              <Component id="btnConectar" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
+                          </Group>
                       </Group>
                   </Group>
               </Group>
@@ -258,6 +268,9 @@
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="selectComActionPerformed"/>
       </Events>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_SerializeTo" type="java.lang.String" value="Parametros_selectCom"/>
+      </AuxValues>
     </Component>
     <Component class="javax.swing.JTextField" name="fldNumeroSerie">
     </Component>
@@ -272,6 +285,14 @@
     <Component class="javax.swing.JTextField" name="fldSegundosRound">
     </Component>
     <Component class="javax.swing.JTextField" name="fldMinutosRound">
+    </Component>
+    <Component class="javax.swing.JButton" name="btnConectar">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Conectar"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnConectarActionPerformed"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>

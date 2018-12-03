@@ -359,7 +359,8 @@ public class Cron extends javax.swing.JFrame {
     }//GEN-LAST:event_blueFaltaActionPerformed
 
     private void MenuConfigurarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuConfigurarActionPerformed
-        th.stop();
+        if (th.isAlive()){
+        th.stop();}
         lblMin.setText("0");
         lblSeg.setText("0");
         rodando = false;
