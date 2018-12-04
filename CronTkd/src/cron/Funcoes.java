@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JDialog;
 
 /**
  *
@@ -38,6 +39,10 @@ public class Funcoes {
         } catch (Exception ex) {
             Logger.getLogger(Funcoes.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    public void mudaBackground(JDialog frame){
+        frame.getContentPane().setBackground(new java.awt.Color(218,230,205));
     }
     
     public void fechaBanco(){

@@ -20,5 +20,8 @@ public class Constantes {
     public static String VAR_NOME_ENTIDADE = "NOMEORGANIZACAO";
     public static String VAR_SERIAL_EQUIP = "NUMSERIE";
     public static String VAR_QTD_ROUNDS = "QTDROUND";
+    public static String VAR_NOME_COMUNICACAO_SERIAL = "diserial";
+    public static String VAR_MINUTOS_MORTE_SUBITA = "MINUTOSMS";
+    public static String VAR_SEGUNDOS_MORTE_SUBITA = "SEGUNDOSMS";
     
 }

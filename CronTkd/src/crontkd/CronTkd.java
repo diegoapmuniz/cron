@@ -6,11 +6,6 @@
 package crontkd;
 
 import cron.Cron;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.event.ActionEvent;
@@ -31,23 +26,26 @@ public class CronTkd extends JApplet {
     private static final int JFXPANEL_WIDTH_INT = 300;
     private static final int JFXPANEL_HEIGHT_INT = 250;
     private static JFXPanel fxContainer;
+    
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-    
+        
+        
         SwingUtilities.invokeLater(new Runnable() {
 
             @Override
             public void run() {
                 try {
                     UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
+                   
                 } catch (Exception e) {
                 }
                 
                 Cron cron = new Cron();
-                conexaobanco();
+                //conexaobanco();
                 cron.setTitle("Cronômetro V1.0");
                 
                 cron.setVisible(true);
@@ -55,13 +53,13 @@ public class CronTkd extends JApplet {
 
             }
 
-            private void conexaobanco() {
+            /*private void conexaobanco() {
                     System.out.println("Entrou Na Conexão");
         try {
             Class.forName("org.hsqldb.jdbcDriver");
             Connection con = DriverManager.getConnection("jdbc:hsqldb:file:/banco/dbTeste", "sa", "");
 
-            Statement stm = con.createStatement();
+            //Statement stm = con.createStatement();
             ResultSet rs = stm.executeQuery("SELECT * FROM usuarios");
 
             while (rs.next()) {
@@ -70,14 +68,14 @@ public class CronTkd extends JApplet {
 
                 System.out.println(nome + " - " + email);
             }
-            stm.execute("SHUTDOWN");
+           // stm.execute("SHUTDOWN");
         } catch (ClassNotFoundException e) {
             System.out.println("Erro ao carregar o driver JDBC. ");
         } catch (SQLException e) {
             System.out.println("Erro de SQL: " + e);
             e.printStackTrace();
         }
-            }
+            }*/
         });
     }
 
@@ -114,7 +112,7 @@ public class CronTkd extends JApplet {
         fxContainer.setScene(new Scene(root));
     }
 
-    public void conexaoBanco() {
+    /*public void conexaoBanco() {
         System.out.println("Entrou Na Conexão");
         try {
             Class.forName("org.hsqldb.jdbcDriver");
@@ -136,6 +134,6 @@ public class CronTkd extends JApplet {
             System.out.println("Erro de SQL: " + e);
             e.printStackTrace();
         }
-    }
+    }*/
 
 }
