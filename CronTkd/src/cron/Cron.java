@@ -2,19 +2,20 @@ package cron;
 
 import entidades.Parameter;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+//import java.util.Timer;
 import javax.swing.AbstractAction;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.KeyStroke;
+import javax.swing.Timer;
+import util.Constantes;
+
 
 /**
  *
@@ -22,17 +23,33 @@ import javax.swing.KeyStroke;
  */
 public class Cron extends javax.swing.JFrame {
     final SimpleDateFormat formato = new SimpleDateFormat("mm:ss");
-    boolean rodando;
-    Thread th = null;
-    boolean pausado;
-    int contadorAzul;
-    int contadorVermelho;
-    int faltaAzul;
-    int faltaVermelho;
-    int contadorRound;
-    int quantidadeRounds;
-    boolean intervalo;
+    public int contadorAzul;
+    public int contadorVermelho;
+    public int faltaAzul;
+    public int faltaVermelho;
+    public int contadorRound =1;
+    public int quantidadeRounds;
+    boolean isIntervalo;
+    boolean isFimRound;
     Funcoes funcoes = new Funcoes();
+    public Timer timerRound;
+    public Timer timerMorteSubita;
+    public Timer timerIntervalo;
+    private int currentSegundoRound ;
+    private int currentMinutoRound;
+    private int currentSegundoIntervalo ;
+    private int currentMinutoIntervalo;
+    private int currentSegundoMorteSubita ;
+    private int currentMinutoMorteSubita;
+    private int velocidade = 1000;
+    private String minutosRound ;
+    private String segundosRound ;
+    private String minutosMorteSubita ;
+    private String segundosMorteSubita ;
+    private String minutosIntervalo ;
+    private String segundosIntervalo ;
+    
+    
     
     private List<Parameter> listaParametros;
 
@@ -42,11 +59,9 @@ public class Cron extends javax.swing.JFrame {
     public Cron() {
         List<Parameter> listaParametros = new ArrayList<>();
         listaParametros = funcoes.carregaParametros();
-        
         setListaParametros(listaParametros);
-        System.out.println(getListaParametros().get(0).getValue());
         initComponents();
-        this.getContentPane().setBackground(new java.awt.Color(218, 230, 205));
+        carregaConfiguracoesTimer();
         inicializa();
         //popularCombo();
 
@@ -152,8 +167,6 @@ public class Cron extends javax.swing.JFrame {
 
         jButton1 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
-        lblMin = new javax.swing.JLabel();
-        lblSeg = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         redPontuacao = new javax.swing.JLabel();
         bluePontuacao = new javax.swing.JLabel();
@@ -164,6 +177,9 @@ public class Cron extends javax.swing.JFrame {
         lblTituloRound = new javax.swing.JLabel();
         lblRound = new javax.swing.JLabel();
         lblStatus = new javax.swing.JLabel();
+        lblSegundoTimer = new javax.swing.JLabel();
+        lblMinutoTimer = new javax.swing.JLabel();
+        lblStatus1 = new javax.swing.JLabel();
         btnRedMaisUm = new javax.swing.JButton();
         btnBlueMaisUm = new javax.swing.JButton();
         btnRedMenosUm = new javax.swing.JButton();
@@ -172,6 +188,7 @@ public class Cron extends javax.swing.JFrame {
         btnBlueFaltaMais = new javax.swing.JButton();
         btnRedFaltaMenos = new javax.swing.JButton();
         btnBlueFaltaMenos = new javax.swing.JButton();
+        btnTimer = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         menuConfiguracoes = new javax.swing.JMenu();
         MenuConfigurar = new javax.swing.JMenuItem();
@@ -191,26 +208,12 @@ public class Cron extends javax.swing.JFrame {
 
         jPanel1.setOpaque(false);
 
-        lblMin.setBackground(new java.awt.Color(0, 0, 0));
-        lblMin.setFont(new java.awt.Font("Tahoma", 1, 48)); // NOI18N
-        lblMin.setForeground(new java.awt.Color(255, 153, 153));
-        lblMin.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblMin.setText("01");
-        lblMin.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        lblMin.setOpaque(true);
-
-        lblSeg.setBackground(new java.awt.Color(0, 0, 0));
-        lblSeg.setFont(new java.awt.Font("Tahoma", 1, 48)); // NOI18N
-        lblSeg.setForeground(new java.awt.Color(255, 153, 153));
-        lblSeg.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblSeg.setText("30");
-        lblSeg.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        lblSeg.setOpaque(true);
-
         jLabel1.setBackground(new java.awt.Color(0, 0, 0));
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 48)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 153, 153));
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText(":");
+        jLabel1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
 
         redPontuacao.setFont(new java.awt.Font("Tahoma", 1, 96)); // NOI18N
         redPontuacao.setForeground(new java.awt.Color(204, 0, 0));
@@ -257,6 +260,28 @@ public class Cron extends javax.swing.JFrame {
         lblStatus.setToolTipText("");
         lblStatus.setOpaque(true);
 
+        lblSegundoTimer.setBackground(new java.awt.Color(0, 0, 0));
+        lblSegundoTimer.setFont(new java.awt.Font("Tahoma", 1, 48)); // NOI18N
+        lblSegundoTimer.setForeground(new java.awt.Color(255, 153, 153));
+        lblSegundoTimer.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblSegundoTimer.setText("01");
+        lblSegundoTimer.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        lblSegundoTimer.setOpaque(true);
+
+        lblMinutoTimer.setBackground(new java.awt.Color(0, 0, 0));
+        lblMinutoTimer.setFont(new java.awt.Font("Tahoma", 1, 48)); // NOI18N
+        lblMinutoTimer.setForeground(new java.awt.Color(255, 153, 153));
+        lblMinutoTimer.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblMinutoTimer.setText("01");
+        lblMinutoTimer.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        lblMinutoTimer.setOpaque(true);
+
+        lblStatus1.setBackground(new java.awt.Color(255, 255, 102));
+        lblStatus1.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        lblStatus1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblStatus1.setToolTipText("");
+        lblStatus1.setOpaque(true);
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -271,17 +296,21 @@ public class Cron extends javax.swing.JFrame {
                         .addComponent(redFaltaContador, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblStatus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(lblTituloRound, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(lblTituloRound, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(lblMinutoTimer, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lblRound, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(lblMin, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(lblSeg, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(lblStatus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblRound, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(lblSegundoTimer, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE))))
+                    .addComponent(lblStatus1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -291,9 +320,9 @@ public class Cron extends javax.swing.JFrame {
                     .addComponent(bluePontuacao, javax.swing.GroupLayout.PREFERRED_SIZE, 248, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
 
-        jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {lblMin, lblSeg});
-
         jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {bluePontuacao, redPontuacao});
+
+        jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {lblMinutoTimer, lblSegundoTimer});
 
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -311,23 +340,32 @@ public class Cron extends javax.swing.JFrame {
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addComponent(lblRound, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(lblTituloRound, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 85, Short.MAX_VALUE))
-                        .addGap(0, 13, Short.MAX_VALUE)))
+                        .addGap(0, 7, Short.MAX_VALUE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(bluePontuacao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(redPontuacao, javax.swing.GroupLayout.DEFAULT_SIZE, 281, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(lblSeg, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(lblMin, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblSegundoTimer, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(lblMinutoTimer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lblStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
+                        .addComponent(lblStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(158, 158, 158))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(bluePontuacao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(redPontuacao, javax.swing.GroupLayout.DEFAULT_SIZE, 281, Short.MAX_VALUE))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(140, 140, 140)
+                                .addComponent(lblStatus1, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
 
         jPanel1Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {bluePontuacao, redPontuacao});
+
+        jPanel1Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {lblMinutoTimer, lblSegundoTimer});
 
         btnRedMaisUm.setBackground(new java.awt.Color(255, 255, 255));
         btnRedMaisUm.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
@@ -405,6 +443,13 @@ public class Cron extends javax.swing.JFrame {
             }
         });
 
+        btnTimer.setText("Timer");
+        btnTimer.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnTimerActionPerformed(evt);
+            }
+        });
+
         menuConfiguracoes.setText("Configurações");
 
         MenuConfigurar.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.ALT_MASK));
@@ -442,14 +487,15 @@ public class Cron extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(btnRedFaltaMais)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnBlueFaltaMais)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton1))
+                        .addComponent(btnBlueFaltaMais))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(btnRedFaltaMenos)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnBlueFaltaMenos)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addComponent(btnBlueFaltaMenos)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton1, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(btnTimer, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addContainerGap())
         );
 
@@ -461,19 +507,25 @@ public class Cron extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnRedMaisUm, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1)
-                    .addComponent(btnBlueMaisUm, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnRedFaltaMais)
-                    .addComponent(btnBlueFaltaMais))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnRedMenosUm, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(btnBlueMenosUm)
-                        .addComponent(btnRedFaltaMenos))
-                    .addComponent(btnBlueFaltaMenos))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnBlueMaisUm, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnRedFaltaMais))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnRedMenosUm, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(btnBlueMenosUm)
+                                .addComponent(btnRedFaltaMenos))
+                            .addComponent(btnBlueFaltaMenos)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(btnRedMaisUm, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButton1)
+                            .addComponent(btnBlueFaltaMais))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnTimer)))
                 .addGap(37, 37, 37))
         );
 
@@ -481,32 +533,54 @@ public class Cron extends javax.swing.JFrame {
 
         layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {btnBlueMaisUm, btnRedFaltaMais});
 
+        btnTimer.getAccessibleContext().setAccessibleName("Timer");
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
 
+    
+    private void carregaConfiguracoesTimer(){
+        listaParametros = getListaParametros();
+               
+        for(int i=0;i<listaParametros.size();i++){
+            if (Constantes.VAR_MINUTOS_ROUND.equals(listaParametros.get(i).getName())) {
+                    minutosRound = listaParametros.get(i).getValue();
+                    currentMinutoRound = Integer.parseInt(minutosRound);
+                }
+              if (Constantes.VAR_SEGUNDOS_ROUND.equals(listaParametros.get(i).getName())) {
+                    segundosRound = listaParametros.get(i).getValue();
+                    currentSegundoRound = Integer.parseInt(segundosRound);
+                }
+              if (Constantes.VAR_MINUTOS_MORTE_SUBITA.equals(listaParametros.get(i).getName())) {
+                    minutosMorteSubita = listaParametros.get(i).getValue();
+                    currentMinutoMorteSubita = Integer.parseInt(minutosMorteSubita);
+                }
+              if (Constantes.VAR_SEGUNDOS_MORTE_SUBITA.equals(listaParametros.get(i).getName())) {
+                    segundosMorteSubita = listaParametros.get(i).getValue();
+                    currentSegundoMorteSubita = Integer.parseInt(segundosMorteSubita);
+                }
+             if (Constantes.VAR_MINUTOS_INTERVALO.equals(listaParametros.get(i).getName())) {
+                    minutosIntervalo = listaParametros.get(i).getValue();
+                    currentMinutoIntervalo = Integer.parseInt(minutosIntervalo);
+                }
+             if (Constantes.VAR_SEGUNDOS_INTERVALO.equals(listaParametros.get(i).getName())) {
+                    segundosIntervalo = listaParametros.get(i).getValue();
+                    currentSegundoIntervalo = Integer.parseInt(segundosIntervalo);
+                }
+              
+        }
+    
+    
+    }
+    
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        //iniciaCronometro();
-        if (rodando) {
-            jButton1.setText("Pausar");
-        }
-        try {
-            cronometrar("01", "31");
-        } catch (InterruptedException ex) {
-            Logger.getLogger(Cron.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        try {
-            List<Parameter> listaParametros = new ArrayList<>();
-            
-            listaParametros = funcoes.carregaParametros();
-        } catch (Exception e) {
-            Logger.getLogger(Cron.class.getName()).log(Level.SEVERE, null, e);
-        }
-
-
+        
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    
+    
+    
     private void btnRedMaisUmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRedMaisUmActionPerformed
         contadorVermelho = contadorVermelho + 1;
         redPontuacao.setText(Integer.toString(contadorVermelho));
@@ -539,17 +613,8 @@ public class Cron extends javax.swing.JFrame {
     }//GEN-LAST:event_btnBlueFaltaMaisActionPerformed
 
     private void MenuConfigurarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuConfigurarActionPerformed
-        if (th != null) {
-            if (th.isAlive()) {
-                th.stop();
-            }
-        }
-        lblMin.setText("0");
-        lblSeg.setText("0");
-        rodando = false;
         jButton1.setText("Iniciar");
-
-        showDialog();
+        showDialogConfiguracoes();
 
     }//GEN-LAST:event_MenuConfigurarActionPerformed
 
@@ -562,14 +627,55 @@ public class Cron extends javax.swing.JFrame {
         faltaAzul = faltaAzul - 1;
         blueFaltaContador.setText(Integer.toString(faltaAzul));
     }//GEN-LAST:event_btnBlueFaltaMenosActionPerformed
+    int contador = 75;
+    private void btnTimerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTimerActionPerformed
+         iniciarCronometro();
+   
+    }//GEN-LAST:event_btnTimerActionPerformed
 
-    private void showDialog() {
+    private void iniciarCronometro(){
+        ActionListener action = new ActionListener() {  
+            public void actionPerformed(ActionEvent e) {  
+                
+                lblRound.setText(String.valueOf(contadorRound));
+                currentSegundoRound--;
+                if(currentSegundoRound<00){
+                    currentMinutoRound--;
+                    currentSegundoRound = 59;
+                }
+                if(currentMinutoRound==0 && currentSegundoRound ==0){
+                    
+                    contadorRound++;
+                    lblRound.setText(String.valueOf(contadorRound));
+                    timerRound.stop();
+                    carregaConfiguracoesTimer();
+                }              
+                String min = currentMinutoRound <= 9? "0"+currentMinutoRound:currentMinutoRound+"";
+                String seg = currentSegundoRound <= 9? "0"+currentSegundoRound:currentSegundoRound+"";
+                
+                lblMinutoTimer.setText(min);
+                lblSegundoTimer.setText(seg);
+            }  
+        };  
+        if(currentMinutoRound>=0 && currentSegundoRound>=0 ){
+        this.timerRound = new Timer(velocidade, action);  
+        this.timerRound.start();  
+        }
+        else{
+            this.timerRound.stop();
+            
+        }
+        
+
+}
+    
+    private void showDialogConfiguracoes() {
         Parametros param = new Parametros();
         param.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
         param.setModal(true);
-        int valor = param.getTeste();
+        //int valor = param.getTeste();
         param.setVisible(true);
-        System.out.println("valor: " + valor);
+        //System.out.println("valor: " + valor);
     }
 
     public void inicializa() {
@@ -578,6 +684,12 @@ public class Cron extends javax.swing.JFrame {
         blueFaltaContador.setText("0");
         redPontuacao.setText("0");
         bluePontuacao.setText("0");
+        int minutosInt = Integer.parseInt(minutosRound);
+        int segundosInt = Integer.parseInt(segundosRound);
+        String min = minutosInt <= 9? "0"+minutosInt:minutosInt+"";
+        String seg = segundosInt <= 9? "0"+segundosInt:segundosInt+"";
+        lblMinutoTimer.setText(min);
+        lblSegundoTimer.setText(seg);
         
     }
 
@@ -605,79 +717,7 @@ public class Cron extends javax.swing.JFrame {
 
     public void cronometrar(String m, String s) throws InterruptedException {
 
-        if (!pausado) {
-            if (!rodando) {
-                jButton1.setText("Pausar");
-                th = new Thread(new Runnable() {
-
-                    @Override
-                    public void run() {
-
-                        addWindowListener(new WindowAdapter() {
-                            @Override
-                            public void windowClosing(WindowEvent e) {
-                                Funcoes func = new Funcoes();
-                                //func.fechaBanco();
-                            }
-                        });
-                        int totalSegundos = Integer.parseInt(s);
-                        int min = Integer.parseInt(m);
-                        min = min * 60;  //
-                        totalSegundos = min + totalSegundos;
-
-                        for (int i = totalSegundos; i > 0; i--) { //tempo recebido em segundos 
-
-                            totalSegundos--;
-
-                            int horas = totalSegundos / 3600; //Para descobrir o total de horas. 
-                            int minutos = (totalSegundos - (horas * 3600)) / 60; //Para descobrir o total de minutos. 
-                            int segundos = (totalSegundos - (horas * 3600)) - (minutos * 60); //Para descobrir o total de segundos. 
-                            String minString = Integer.toString(minutos);
-                            String segString = Integer.toString(segundos);
-
-                            if (minString.length() == 1) {
-                                minString = "0" + minString;
-                            }
-                            if (segString.length() == 1) {
-                                segString = "0" + segString;
-                            }
-                            lblMin.setText(minString);
-                            lblSeg.setText(segString);
-
-                            try {
-                                th.sleep(1000);
-                            } catch (InterruptedException ex) {
-                                Logger.getLogger(Cron.class.getName()).log(Level.SEVERE, null, ex);
-                            }
-                            if (horas == 0 && minutos == 0 && segundos == 0) {
-                                rodando = false;
-                                if(contadorRound <= quantidadeRounds){
-                                    contadorRound = contadorRound+1;
-                                }
-                                jButton1.setText("Iniciar");
-                                break;
-                            }
-
-                        }
-                    }
-                });
-
-                th.start();
-                rodando = true;
-                pausado = false;
-                //th.sleep(1000);
-            } else {
-                th.suspend();
-                rodando = false;
-                pausado = true;
-                jButton1.setText("Resumir");
-            }
-        } else {
-            th.resume();
-            jButton1.setText("Pausar");
-            pausado = false;
-            rodando = true;
-        }
+        
 
     }
 
@@ -703,16 +743,18 @@ public class Cron extends javax.swing.JFrame {
     private javax.swing.JButton btnRedFaltaMenos;
     private javax.swing.JButton btnRedMaisUm;
     private javax.swing.JButton btnRedMenosUm;
+    private javax.swing.JButton btnTimer;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JLabel lblMin;
+    private javax.swing.JLabel lblMinutoTimer;
     private javax.swing.JLabel lblRound;
-    private javax.swing.JLabel lblSeg;
+    private javax.swing.JLabel lblSegundoTimer;
     private javax.swing.JLabel lblStatus;
+    private javax.swing.JLabel lblStatus1;
     private javax.swing.JLabel lblTituloRound;
     private javax.swing.JMenu menuAjuda;
     private javax.swing.JMenu menuConfiguracoes;
