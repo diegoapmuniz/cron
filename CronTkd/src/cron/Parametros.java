@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package cron;
 
 import entidades.Parameter;
@@ -22,7 +21,9 @@ import javax.comm.SerialPort;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
 import javax.swing.WindowConstants;
+import javax.swing.plaf.ColorUIResource;
 import util.Constantes;
 import util.ControlePorta;
 
@@ -30,9 +31,10 @@ import util.ControlePorta;
  *
  * @author p062964
  */
-public final class Parametros extends JDialog{
+public final class Parametros extends JDialog {
+
     public int teste = 10;
-    public String minutosRound ;
+    public String minutosRound;
     public String segundosRound;
     public String portaCom;
     public String minutosIntervalo;
@@ -41,6 +43,8 @@ public final class Parametros extends JDialog{
     public String nomeEntidade;
     public String serialEquipamento;
     public String quantidadeRound;
+    public String minutosMorteSubita;
+    public String segundosmorteSubita;
     public int baudRate = 115200;
     public List<Parameter> listaParametros;
     public OutputStream serialOut;
@@ -48,12 +52,6 @@ public final class Parametros extends JDialog{
     //private ControlePorta arduino;
     SerialPort portaSerial;
     private ControlePorta controle;
-   
-
-    
-    
-    
-    
 
     public int getTeste() {
         return teste;
@@ -62,55 +60,61 @@ public final class Parametros extends JDialog{
     public void setTeste(int teste) {
         this.teste = teste;
     }
+
     /**
      * Creates new form Parametros
      */
     public Parametros() {
-         
+
         this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         Funcoes funcoes = new Funcoes();
         setListaParametros(funcoes.carregaParametros());
         initComponents();
-        getContentPane().setBackground(new java.awt.Color(218,230,205));
         
         popularPortas();
-        List<Parameter> lista ;
-        
+        List<Parameter> lista;
+
         lista = getListaParametros();
-        if(lista.size()>0){
-            for(int i=0;i<lista.size();i++){
-                if(Constantes.VAR_MINUTOS_ROUND.equals(lista.get(i).getName())){
+        if (lista.size() > 0) {
+            for (int i = 0; i < lista.size(); i++) {
+                if (Constantes.VAR_MINUTOS_ROUND.equals(lista.get(i).getName())) {
                     setMinutosRound(lista.get(i).getValue());
                 }
-                if(Constantes.VAR_SEGUNDOS_ROUND.equals(lista.get(i).getName())){
+                if (Constantes.VAR_SEGUNDOS_ROUND.equals(lista.get(i).getName())) {
                     setSegundosRound(lista.get(i).getValue());
                 }
-                if(Constantes.VAR_PORTA_COMUNICACAO.equals(lista.get(i).getName())){
+                if (Constantes.VAR_PORTA_COMUNICACAO.equals(lista.get(i).getName())) {
                     setPortaCom(lista.get(i).getValue());
                 }
-                if(Constantes.VAR_MINUTOS_INTERVALO.equals(lista.get(i).getName())){
+                if (Constantes.VAR_MINUTOS_INTERVALO.equals(lista.get(i).getName())) {
                     setMinutosIntervalo(lista.get(i).getValue());
                 }
-                if(Constantes.VAR_SEGUNDOS_INTERVALO.equals(lista.get(i).getName())){
+                if (Constantes.VAR_SEGUNDOS_INTERVALO.equals(lista.get(i).getName())) {
                     setSegundosIntervalo(lista.get(i).getValue());
                 }
-                if(Constantes.VAR_LOGO.equals(lista.get(i).getName())){
+                if (Constantes.VAR_LOGO.equals(lista.get(i).getName())) {
                     setLogo(lista.get(i).getValue());
                 }
-                if(Constantes.VAR_NOME_ENTIDADE.equals(lista.get(i).getName())){
-                     setNomeEntidade(lista.get(i).getValue());
+                if (Constantes.VAR_NOME_ENTIDADE.equals(lista.get(i).getName())) {
+                    setNomeEntidade(lista.get(i).getValue());
                 }
-                if(Constantes.VAR_SERIAL_EQUIP.equals(lista.get(i).getName())){
-                     setSerialEquipamento(lista.get(i).getValue());
+                if (Constantes.VAR_SERIAL_EQUIP.equals(lista.get(i).getName())) {
+                    setSerialEquipamento(lista.get(i).getValue());
                 }
-                if(Constantes.VAR_QTD_ROUNDS.equals(lista.get(i).getName())){
-                     setQuantidadeRound(lista.get(i).getValue());
-                }         
-                
+                if (Constantes.VAR_MINUTOS_MORTE_SUBITA.equals(lista.get(i).getName())) {
+                    setMinutosMorteSubita(lista.get(i).getValue());
+                }
+                if (Constantes.VAR_SEGUNDOS_MORTE_SUBITA.equals(lista.get(i).getName())) {
+                    setSegundosmorteSubita(lista.get(i).getValue());
+                }
+
+                if (Constantes.VAR_QTD_ROUNDS.equals(lista.get(i).getName())) {
+                    setQuantidadeRound(lista.get(i).getValue());
+                }
+
             }
-        }
-        else{
-        //TODO Salvar lista com parãmetros padrão 
+        } else {
+            //TODO Salvar lista com parãmetros padrão 
         }
         fldMinutosIntervalo.setText(getMinutosIntervalo());
         fldSegundosIntervalo.setText(getSegundosIntervalo());
@@ -119,23 +123,26 @@ public final class Parametros extends JDialog{
         fldNomeEntidade.setText(getNomeEntidade());
         fldNumeroSerie.setText(getSerialEquipamento());
         fldQuantidadeRounds.setText(getQuantidadeRound());
-        
-        
+        fldMinutosMorteSubita.setText(getMinutosMorteSubita());
+        fldSegundosMorteSubita.setText(getSegundosmorteSubita());
+
         addWindowListener(new WindowAdapter() {
-                @Override public void windowClosing(WindowEvent e) {
+            @Override
+            public void windowClosing(WindowEvent e) {
                 int dialogButton = JOptionPane.YES_NO_OPTION;
-                int resultadoDlg = JOptionPane.showConfirmDialog (null, "Os Dados Não foram Salvos, deseja continuar","Warning",dialogButton);
-                if(resultadoDlg == JOptionPane.YES_OPTION){
-                   dispose();
-                }else{
-                   
+               
+                int resultadoDlg = JOptionPane.showConfirmDialog(null, "Os Dados Não foram Salvos, deseja continuar", "Warning", dialogButton);
+                if (resultadoDlg == JOptionPane.YES_OPTION) {
+                    dispose();
+                } else {
+
                 }
-                }
-            });
+            }
+        });
     }
-    
-  public void popularPortas() {
-         DefaultComboBoxModel comboModel = (DefaultComboBoxModel) selectCom.getModel();
+
+    public void popularPortas() {
+        DefaultComboBoxModel comboModel = (DefaultComboBoxModel) selectCom.getModel();
         selectCom.removeAllItems();
         Enumeration<?> portList = CommPortIdentifier.getPortIdentifiers();
         while (portList.hasMoreElements()) {
@@ -145,9 +152,9 @@ public final class Parametros extends JDialog{
 
             }
         }
-       
-        
+
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -180,6 +187,8 @@ public final class Parametros extends JDialog{
         fldMinutosRound = new javax.swing.JTextField();
         btnConectar = new javax.swing.JButton();
         btnDesconectar = new javax.swing.JButton();
+        fldMinutosMorteSubita = new javax.swing.JTextField();
+        fldSegundosMorteSubita = new javax.swing.JTextField();
 
         jCheckBoxMenuItem1.setSelected(true);
         jCheckBoxMenuItem1.setText("jCheckBoxMenuItem1");
@@ -274,41 +283,47 @@ public final class Parametros extends JDialog{
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(599, 599, 599)
-                .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnSalvar, javax.swing.GroupLayout.DEFAULT_SIZE, 91, Short.MAX_VALUE)
-                .addContainerGap())
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(lblMinR, javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(lblSegR, javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(lblMinIntervalo, javax.swing.GroupLayout.Alignment.TRAILING))
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(lblSegIntervalo, javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(lblQtdRounds, javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(lblLogo, javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(lblNomEntidade, javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(lblSerialEquipamento, javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(lblPortaCom, javax.swing.GroupLayout.Alignment.TRAILING)))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(fldQuantidadeRounds)
-                    .addComponent(fldSegundosIntervalo)
-                    .addComponent(fldMinutosIntervalo)
-                    .addComponent(fldSegundosRound, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(fldMinutosRound, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(selectCom, javax.swing.GroupLayout.PREFERRED_SIZE, 393, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnConectar)
+                        .addGap(599, 599, 599)
+                        .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnDesconectar))
-                    .addComponent(fldNumeroSerie, javax.swing.GroupLayout.PREFERRED_SIZE, 393, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(fldNomeEntidade, javax.swing.GroupLayout.PREFERRED_SIZE, 393, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(75, Short.MAX_VALUE))
+                        .addComponent(btnSalvar, javax.swing.GroupLayout.DEFAULT_SIZE, 91, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(lblMinR, javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(lblSegR, javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(lblMinIntervalo, javax.swing.GroupLayout.Alignment.TRAILING))
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(lblSegIntervalo, javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(lblQtdRounds, javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(lblLogo, javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(lblNomEntidade, javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(lblSerialEquipamento, javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(lblPortaCom, javax.swing.GroupLayout.Alignment.TRAILING)))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(fldQuantidadeRounds)
+                            .addComponent(fldSegundosIntervalo)
+                            .addComponent(fldMinutosIntervalo)
+                            .addComponent(fldSegundosRound, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(fldMinutosRound, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(selectCom, javax.swing.GroupLayout.PREFERRED_SIZE, 393, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(btnConectar)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnDesconectar))
+                            .addComponent(fldNumeroSerie, javax.swing.GroupLayout.PREFERRED_SIZE, 393, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(fldNomeEntidade, javax.swing.GroupLayout.PREFERRED_SIZE, 393, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(fldMinutosMorteSubita, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(fldSegundosMorteSubita, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
 
         layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {lblLogo, lblMinIntervalo, lblMinR, lblNomEntidade, lblPortaCom, lblQtdRounds, lblSegIntervalo, lblSegR, lblSerialEquipamento});
@@ -358,7 +373,11 @@ public final class Parametros extends JDialog{
                                 .addComponent(lblPortaCom, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(selectCom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(btnDesconectar, javax.swing.GroupLayout.DEFAULT_SIZE, 36, Short.MAX_VALUE))
-                        .addGap(58, 58, 58)))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(fldMinutosMorteSubita, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(fldSegundosMorteSubita, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(20, 20, 20)))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnCancelar)
                     .addComponent(btnSalvar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -379,101 +398,111 @@ public final class Parametros extends JDialog{
     }//GEN-LAST:event_selectComActionPerformed
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
-           this.setVisible(false);
-           this.dispose();
-        
+        this.setVisible(false);
+        this.dispose();
+
     }//GEN-LAST:event_btnCancelarActionPerformed
 
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
         Funcoes func = new Funcoes();
         List<Parameter> listaSalvar = new ArrayList<>();
-        List<Parameter> listaParametros = getListaParametros() ;
-        
-        for(int i=0;i<listaParametros.size();i++){
-            
-                if(Constantes.VAR_MINUTOS_ROUND.equals(listaParametros.get(i).getName())){
-                    listaParametros.get(i).setValue(fldMinutosRound.getText());
-                    
-                }
-                if(Constantes.VAR_SEGUNDOS_ROUND.equals(listaParametros.get(i).getName())){
-                    listaParametros.get(i).setValue(fldSegundosRound.getText());
-                }
-                if(Constantes.VAR_PORTA_COMUNICACAO.equals(listaParametros.get(i).getName())){
-                    listaParametros.get(i).setValue(selectCom.getName());
-                }
-                if(Constantes.VAR_MINUTOS_INTERVALO.equals(listaParametros.get(i).getName())){
-                    listaParametros.get(i).setValue(fldMinutosIntervalo.getText());
-                }
-                if(Constantes.VAR_SEGUNDOS_INTERVALO.equals(listaParametros.get(i).getName())){
-                    listaParametros.get(i).setValue(fldSegundosIntervalo.getText());
-                }
-                /*if(Constantes.VAR_LOGO.equals(listaParametros.get(i).getName())){
-                    listaParametros.get(i).setValue(fld.getText());
-                }*/
-                if(Constantes.VAR_NOME_ENTIDADE.equals(listaParametros.get(i).getName())){
-                     listaParametros.get(i).setValue(fldNomeEntidade.getText());
-                }
-                if(Constantes.VAR_SERIAL_EQUIP.equals(listaParametros.get(i).getName())){
-                     listaParametros.get(i).setValue(fldNumeroSerie.getText());
-                }
-                if(Constantes.VAR_QTD_ROUNDS.equals(listaParametros.get(i).getName())){
-                     listaParametros.get(i).setValue(fldQuantidadeRounds.getText());
-                } 
-            
+        List<Parameter> listaParametros = getListaParametros();
+
+        for (int i = 0; i < listaParametros.size(); i++) {
+
+            if (Constantes.VAR_MINUTOS_ROUND.equals(listaParametros.get(i).getName())) {
+                listaParametros.get(i).setValue(fldMinutosRound.getText());
+
+            }
+            if (Constantes.VAR_SEGUNDOS_ROUND.equals(listaParametros.get(i).getName())) {
+                listaParametros.get(i).setValue(fldSegundosRound.getText());
+            }
+            if (Constantes.VAR_PORTA_COMUNICACAO.equals(listaParametros.get(i).getName())) {
+                listaParametros.get(i).setValue(selectCom.getName());
+            }
+            if (Constantes.VAR_MINUTOS_INTERVALO.equals(listaParametros.get(i).getName())) {
+                listaParametros.get(i).setValue(fldMinutosIntervalo.getText());
+            }
+            if (Constantes.VAR_SEGUNDOS_INTERVALO.equals(listaParametros.get(i).getName())) {
+                listaParametros.get(i).setValue(fldSegundosIntervalo.getText());
+            }
+            /*if(Constantes.VAR_LOGO.equals(listaParametros.get(i).getName())){
+             listaParametros.get(i).setValue(fld.getText());
+             }*/
+            if (Constantes.VAR_NOME_ENTIDADE.equals(listaParametros.get(i).getName())) {
+                listaParametros.get(i).setValue(fldNomeEntidade.getText());
+            }
+            if (Constantes.VAR_SERIAL_EQUIP.equals(listaParametros.get(i).getName())) {
+                listaParametros.get(i).setValue(fldNumeroSerie.getText());
+            }
+            if (Constantes.VAR_QTD_ROUNDS.equals(listaParametros.get(i).getName())) {
+                listaParametros.get(i).setValue(fldQuantidadeRounds.getText());
+            }
+
+            if (Constantes.VAR_MINUTOS_MORTE_SUBITA.equals(listaParametros.get(i).getName())) {
+                listaParametros.get(i).setValue(fldMinutosMorteSubita.getText());
+            }
+            if (Constantes.VAR_SEGUNDOS_MORTE_SUBITA.equals(listaParametros.get(i).getName())) {
+                listaParametros.get(i).setValue(fldSegundosMorteSubita.getText());
+            }
+
+            if (Constantes.VAR_QTD_ROUNDS.equals(listaParametros.get(i).getName())) {
+                listaParametros.get(i).setValue(fldQuantidadeRounds.getText());
+            }
+
             listaSalvar.add(listaParametros.get(i));
-            
+
         }
-        
+
         func.salvaParametros(listaSalvar);
         this.dispose();
-        
+
     }//GEN-LAST:event_btnSalvarActionPerformed
-public void abrePortaCom() {
-/* String porta = selectCom.getSelectedItem().toString();
+    public void abrePortaCom() {
+        /* String porta = selectCom.getSelectedItem().toString();
 
     
     
-try{
-   com = CommPortIdentifier.getPortIdentifier(porta);
-   int timeout = 6000;
+         try{
+         com = CommPortIdentifier.getPortIdentifier(porta);
+         int timeout = 6000;
    
-   portaSerial = (SerialPort)com.open("PlacaSensoriamento",timeout);
-   JOptionPane.showMessageDialog(null, "Configurando Porta Serial");
-   portaSerial.setSerialPortParams(baudRate, portaSerial.DATABITS_8, portaSerial.STOPBITS_1, portaSerial.PARITY_NONE);
-}
+         portaSerial = (SerialPort)com.open("PlacaSensoriamento",timeout);
+         JOptionPane.showMessageDialog(null, "Configurando Porta Serial");
+         portaSerial.setSerialPortParams(baudRate, portaSerial.DATABITS_8, portaSerial.STOPBITS_1, portaSerial.PARITY_NONE);
+         }
 
-catch (NoSuchPortException nspe){
-   System.err.println("Porta não existe! : " + porta);
-   JOptionPane.showMessageDialog(this,"Porta não existe!","Erro ao Abrir Porta Serial", JOptionPane.ERROR_MESSAGE); 
+         catch (NoSuchPortException nspe){
+         System.err.println("Porta não existe! : " + porta);
+         JOptionPane.showMessageDialog(this,"Porta não existe!","Erro ao Abrir Porta Serial", JOptionPane.ERROR_MESSAGE); 
           
 
-}
+         }
 
-catch (PortInUseException piu){
-   System.err.println("Porta ja esta aberta!");
-   JOptionPane.showMessageDialog(this,"Porta ja esta aberta!","Erro ao Abrir Porta Serial", JOptionPane.ERROR_MESSAGE); 
-}
+         catch (PortInUseException piu){
+         System.err.println("Porta ja esta aberta!");
+         JOptionPane.showMessageDialog(this,"Porta ja esta aberta!","Erro ao Abrir Porta Serial", JOptionPane.ERROR_MESSAGE); 
+         }
 
-catch (UnsupportedCommOperationException uscoe){
+         catch (UnsupportedCommOperationException uscoe){
     
-   System.err.println("Configuração dos parametros da porta não suportada!");
-   JOptionPane.showMessageDialog(this,"Configuração dos parametros da porta não suportada!","Erro ao Abrir Porta Serial", JOptionPane.ERROR_MESSAGE); 
-}*/
-}
-    
-    
-    
+         System.err.println("Configuração dos parametros da porta não suportada!");
+         JOptionPane.showMessageDialog(this,"Configuração dos parametros da porta não suportada!","Erro ao Abrir Porta Serial", JOptionPane.ERROR_MESSAGE); 
+         }*/
+    }
+
+
     private void btnConectarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConectarActionPerformed
-                  //abrePortaCom();
-                  if(controle != null){
-                      SerialPort porta = controle.getPortHist();
-                      porta.close();
-                      controle.getPortHist().close();
-                      
-                  }
-                  
-                  controle = new ControlePorta(selectCom.getSelectedItem().toString(),9600);
-                  
+        //abrePortaCom();
+        if (controle != null) {
+            SerialPort porta = controle.getPortHist();
+            porta.close();
+            controle.getPortHist().close();
+
+        }
+
+        controle = new ControlePorta(selectCom.getSelectedItem().toString(), 9600);
+
     }//GEN-LAST:event_btnConectarActionPerformed
 
     private void btnDesconectarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDesconectarActionPerformed
@@ -484,18 +513,15 @@ catch (UnsupportedCommOperationException uscoe){
         } catch (IOException ex) {
             Logger.getLogger(Parametros.class.getName()).log(Level.SEVERE, null, ex);
         }
-         JOptionPane.showMessageDialog(null, "Porta serial fechada");
+        JOptionPane.showMessageDialog(null, "Porta serial fechada");
     }//GEN-LAST:event_btnDesconectarActionPerformed
 
-    
-    
-    
     /**
-     * 
+     *
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        
+
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -523,11 +549,11 @@ catch (UnsupportedCommOperationException uscoe){
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                        Parametros param = new Parametros();
-                        param.setBackground(new java.awt.Color(218,230,205));
-                          
-                      param.setVisible(true);
-                
+                Parametros param = new Parametros();
+                param.setBackground(new java.awt.Color(218, 230, 205));
+
+                param.setVisible(true);
+
             }
         });
     }
@@ -611,9 +637,23 @@ catch (UnsupportedCommOperationException uscoe){
     public void setListaParametros(List<Parameter> listaParametros) {
         this.listaParametros = listaParametros;
     }
-    
-    
-    
+
+    public String getMinutosMorteSubita() {
+        return minutosMorteSubita;
+    }
+
+    public void setMinutosMorteSubita(String minutosMorteSubita) {
+        this.minutosMorteSubita = minutosMorteSubita;
+    }
+
+    public String getSegundosmorteSubita() {
+        return segundosmorteSubita;
+    }
+
+    public void setSegundosmorteSubita(String segundosmorteSubita) {
+        this.segundosmorteSubita = segundosmorteSubita;
+    }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancelar;
@@ -621,11 +661,13 @@ catch (UnsupportedCommOperationException uscoe){
     private javax.swing.JButton btnDesconectar;
     private javax.swing.JButton btnSalvar;
     private javax.swing.JTextField fldMinutosIntervalo;
+    private javax.swing.JTextField fldMinutosMorteSubita;
     private javax.swing.JTextField fldMinutosRound;
     private javax.swing.JTextField fldNomeEntidade;
     private javax.swing.JTextField fldNumeroSerie;
     private javax.swing.JTextField fldQuantidadeRounds;
     private javax.swing.JTextField fldSegundosIntervalo;
+    private javax.swing.JTextField fldSegundosMorteSubita;
     private javax.swing.JTextField fldSegundosRound;
     private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem1;
     private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem2;

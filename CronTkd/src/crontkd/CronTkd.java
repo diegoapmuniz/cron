@@ -16,6 +16,7 @@ import javafx.scene.layout.StackPane;
 import javax.swing.JApplet;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.plaf.ColorUIResource;
 
 /**
  *
@@ -39,7 +40,12 @@ public class CronTkd extends JApplet {
             @Override
             public void run() {
                 try {
-                    UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
+                      
+                 
+                UIManager.put("OptionPane.background",new ColorUIResource(new java.awt.Color(218, 230, 205)));
+                UIManager.put("ContentPane.background",new ColorUIResource(new java.awt.Color(218, 230, 205)));
+                UIManager.put("Panel.background",new ColorUIResource(new java.awt.Color(218, 230, 205)));
+                UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
                    
                 } catch (Exception e) {
                 }

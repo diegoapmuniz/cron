@@ -43,47 +43,56 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" attributes="0">
-              <EmptySpace min="-2" pref="599" max="-2" attributes="0"/>
-              <Component id="btnCancelar" min="-2" pref="91" max="-2" attributes="0"/>
-              <EmptySpace min="-2" max="-2" attributes="0"/>
-              <Component id="btnSalvar" pref="91" max="32767" attributes="0"/>
-              <EmptySpace min="-2" max="-2" attributes="0"/>
-          </Group>
-          <Group type="102" alignment="0" attributes="0">
-              <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="103" alignment="0" groupAlignment="0" max="-2" attributes="0">
-                      <Component id="lblMinR" linkSize="2" alignment="1" min="-2" max="-2" attributes="0"/>
-                      <Component id="lblSegR" linkSize="2" alignment="1" min="-2" max="-2" attributes="0"/>
-                      <Component id="lblMinIntervalo" linkSize="2" alignment="1" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <Group type="103" alignment="0" groupAlignment="0" attributes="0">
-                      <Component id="lblSegIntervalo" linkSize="2" alignment="1" min="-2" max="-2" attributes="0"/>
-                      <Component id="lblQtdRounds" linkSize="2" alignment="1" min="-2" max="-2" attributes="0"/>
-                      <Component id="lblLogo" linkSize="2" alignment="1" min="-2" max="-2" attributes="0"/>
-                      <Component id="lblNomEntidade" linkSize="2" alignment="1" min="-2" max="-2" attributes="0"/>
-                      <Component id="lblSerialEquipamento" linkSize="2" alignment="1" min="-2" max="-2" attributes="0"/>
-                      <Component id="lblPortaCom" linkSize="2" alignment="1" min="-2" max="-2" attributes="0"/>
-                  </Group>
-              </Group>
-              <EmptySpace type="separate" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="fldQuantidadeRounds" linkSize="4" alignment="0" max="32767" attributes="0"/>
-                  <Component id="fldSegundosIntervalo" linkSize="4" alignment="0" max="32767" attributes="0"/>
-                  <Component id="fldMinutosIntervalo" linkSize="4" alignment="0" max="32767" attributes="0"/>
-                  <Component id="fldSegundosRound" linkSize="4" min="-2" max="-2" attributes="0"/>
-                  <Component id="fldMinutosRound" linkSize="4" alignment="0" min="-2" pref="50" max="-2" attributes="0"/>
                   <Group type="102" attributes="0">
-                      <Component id="selectCom" min="-2" pref="393" max="-2" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="btnConectar" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="btnDesconectar" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="599" max="-2" attributes="0"/>
+                      <Component id="btnCancelar" min="-2" pref="91" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                      <Component id="btnSalvar" pref="91" max="32767" attributes="0"/>
                   </Group>
-                  <Component id="fldNumeroSerie" min="-2" pref="393" max="-2" attributes="0"/>
-                  <Component id="fldNomeEntidade" min="-2" pref="393" max="-2" attributes="0"/>
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="103" alignment="0" groupAlignment="0" max="-2" attributes="0">
+                              <Component id="lblMinR" linkSize="2" alignment="1" min="-2" max="-2" attributes="0"/>
+                              <Component id="lblSegR" linkSize="2" alignment="1" min="-2" max="-2" attributes="0"/>
+                              <Component id="lblMinIntervalo" linkSize="2" alignment="1" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="103" alignment="0" groupAlignment="0" attributes="0">
+                              <Component id="lblSegIntervalo" linkSize="2" alignment="1" min="-2" max="-2" attributes="0"/>
+                              <Component id="lblQtdRounds" linkSize="2" alignment="1" min="-2" max="-2" attributes="0"/>
+                              <Component id="lblLogo" linkSize="2" alignment="1" min="-2" max="-2" attributes="0"/>
+                              <Component id="lblNomEntidade" linkSize="2" alignment="1" min="-2" max="-2" attributes="0"/>
+                              <Component id="lblSerialEquipamento" linkSize="2" alignment="1" min="-2" max="-2" attributes="0"/>
+                              <Component id="lblPortaCom" linkSize="2" alignment="1" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="fldQuantidadeRounds" linkSize="4" alignment="0" max="32767" attributes="0"/>
+                          <Component id="fldSegundosIntervalo" linkSize="4" alignment="0" max="32767" attributes="0"/>
+                          <Component id="fldMinutosIntervalo" linkSize="4" alignment="0" max="32767" attributes="0"/>
+                          <Component id="fldSegundosRound" linkSize="4" min="-2" max="-2" attributes="0"/>
+                          <Component id="fldMinutosRound" linkSize="4" alignment="0" min="-2" pref="50" max="-2" attributes="0"/>
+                          <Group type="102" attributes="0">
+                              <Component id="selectCom" min="-2" pref="393" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Component id="btnConectar" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="btnDesconectar" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <Component id="fldNumeroSerie" min="-2" pref="393" max="-2" attributes="0"/>
+                          <Component id="fldNomeEntidade" min="-2" pref="393" max="-2" attributes="0"/>
+                          <Group type="102" attributes="0">
+                              <Component id="fldMinutosMorteSubita" min="-2" pref="50" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Component id="fldSegundosMorteSubita" min="-2" pref="50" max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
+                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                  </Group>
               </Group>
-              <EmptySpace pref="75" max="32767" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -139,7 +148,12 @@
                           </Group>
                           <Component id="btnDesconectar" pref="36" max="32767" attributes="0"/>
                       </Group>
-                      <EmptySpace min="-2" pref="58" max="-2" attributes="0"/>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="fldMinutosMorteSubita" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="fldSegundosMorteSubita" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
                   </Group>
               </Group>
               <Group type="103" groupAlignment="3" attributes="0">
@@ -310,6 +324,10 @@
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnDesconectarActionPerformed"/>
       </Events>
+    </Component>
+    <Component class="javax.swing.JTextField" name="fldMinutosMorteSubita">
+    </Component>
+    <Component class="javax.swing.JTextField" name="fldSegundosMorteSubita">
     </Component>
   </SubComponents>
 </Form>
