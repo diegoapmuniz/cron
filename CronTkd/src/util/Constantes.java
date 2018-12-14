@@ -8,7 +8,7 @@ package util;
 
 /**
  *
- * @author Diego Muniz - diego2605@gmail.com
+ * @author Diego Muniz <diego2605@gmail.com>
  */
 public class Constantes {
     public static String VAR_MINUTOS_ROUND = "MINUTOSR";

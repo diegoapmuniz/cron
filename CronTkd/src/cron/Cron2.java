@@ -26,7 +26,7 @@ import javax.swing.UIManager;
 
 /**
  *
- * @author p062964
+ * @author Diego Muniz <diego2605@gmail.com>
  */
 public class Cron2 extends JApplet {
 

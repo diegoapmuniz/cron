@@ -8,7 +8,7 @@ import javax.persistence.Table;
 
 /**
  *
- * @author Diego Muniz -- diego2605@gmail.com
+ * @author Diego Muniz <diego2605@gmail.com>
  */
 @Entity
 @Table(name="PARAMETROS")

@@ -18,7 +18,7 @@ import javax.persistence.criteria.Root;
 
 /**
  *
- * @author p062964
+ * @author Diego Muniz <diego2605@gmail.com>
  */
 public class ParameterDao {
     private static ParameterDao service;

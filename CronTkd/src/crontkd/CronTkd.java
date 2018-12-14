@@ -20,7 +20,7 @@ import javax.swing.plaf.ColorUIResource;
 
 /**
  *
- * @author p062964
+ * @author Diego Muniz <diego2605@gmail.com>
  */
 public class CronTkd extends JApplet {
 

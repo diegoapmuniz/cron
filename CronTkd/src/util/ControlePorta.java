@@ -2,7 +2,7 @@ package util;
 
 /**
  *
- * @author Diego Muniz
+ * @author Diego Muniz <diego2605@gmail.com>
  */
 
 

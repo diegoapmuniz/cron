@@ -26,7 +26,7 @@ import util.ControlePorta;
 
 /**
  *
- * @author p062964
+ * @author Diego Muniz <diego2605@gmail.com>
  */
 public final class Parametros extends JDialog {
 

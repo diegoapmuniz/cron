@@ -20,7 +20,7 @@ import util.Constantes;
 
 /**
  *
- * @author Diego Muniz
+ * @author Diego Muniz <diego2605@gmail.com>
  */
 public class Cron extends javax.swing.JFrame {
 
