@@ -15,15 +15,12 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.scene.paint.Color;
 import javax.comm.CommPortIdentifier;
 import javax.comm.SerialPort;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
-import javax.swing.UIManager;
 import javax.swing.WindowConstants;
-import javax.swing.plaf.ColorUIResource;
 import util.Constantes;
 import util.ControlePorta;
 
@@ -45,6 +42,7 @@ public final class Parametros extends JDialog {
     public String quantidadeRound;
     public String minutosMorteSubita;
     public String segundosmorteSubita;
+    public String qtdMaximaFaltas;
     public int baudRate = 115200;
     public List<Parameter> listaParametros;
     public OutputStream serialOut;
@@ -52,6 +50,7 @@ public final class Parametros extends JDialog {
     //private ControlePorta arduino;
     SerialPort portaSerial;
     private ControlePorta controle;
+    
 
     public int getTeste() {
         return teste;
@@ -170,7 +169,6 @@ public final class Parametros extends JDialog {
         lblSegR = new javax.swing.JLabel();
         lblPortaCom = new javax.swing.JLabel();
         lblMinIntervalo = new javax.swing.JLabel();
-        lblSegIntervalo = new javax.swing.JLabel();
         lblLogo = new javax.swing.JLabel();
         lblNomEntidade = new javax.swing.JLabel();
         lblSerialEquipamento = new javax.swing.JLabel();
@@ -189,6 +187,11 @@ public final class Parametros extends JDialog {
         btnDesconectar = new javax.swing.JButton();
         fldMinutosMorteSubita = new javax.swing.JTextField();
         fldSegundosMorteSubita = new javax.swing.JTextField();
+        lblMinR1 = new javax.swing.JLabel();
+        lblMinR2 = new javax.swing.JLabel();
+        lblMinR3 = new javax.swing.JLabel();
+        lblSegR1 = new javax.swing.JLabel();
+        fldMaximoFaltas = new javax.swing.JTextField();
 
         jCheckBoxMenuItem1.setSelected(true);
         jCheckBoxMenuItem1.setText("jCheckBoxMenuItem1");
@@ -203,12 +206,12 @@ public final class Parametros extends JDialog {
 
         lblMinR.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         lblMinR.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        lblMinR.setText("Minutos Round:");
+        lblMinR.setText("Tempo Round :");
         lblMinR.setToolTipText("");
 
         lblSegR.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         lblSegR.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        lblSegR.setText("Segundos Round:");
+        lblSegR.setText("N° Máximo de Faltas :");
         lblSegR.setToolTipText("");
 
         lblPortaCom.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
@@ -217,11 +220,7 @@ public final class Parametros extends JDialog {
 
         lblMinIntervalo.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         lblMinIntervalo.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        lblMinIntervalo.setText("Minutos Intervalo:");
-
-        lblSegIntervalo.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
-        lblSegIntervalo.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        lblSegIntervalo.setText("Segundos Intervalo:");
+        lblMinIntervalo.setText("Tempo Intervalo :");
 
         lblLogo.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         lblLogo.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -237,7 +236,7 @@ public final class Parametros extends JDialog {
 
         lblQtdRounds.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         lblQtdRounds.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        lblQtdRounds.setText("Quantidade Rounds:");
+        lblQtdRounds.setText("Quantidade Rounds :");
 
         btnCancelar.setText("Cancelar");
         btnCancelar.addActionListener(new java.awt.event.ActionListener() {
@@ -278,6 +277,26 @@ public final class Parametros extends JDialog {
             }
         });
 
+        lblMinR1.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
+        lblMinR1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblMinR1.setText(":");
+        lblMinR1.setToolTipText("");
+
+        lblMinR2.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
+        lblMinR2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblMinR2.setText(":");
+        lblMinR2.setToolTipText("");
+
+        lblMinR3.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
+        lblMinR3.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblMinR3.setText(":");
+        lblMinR3.setToolTipText("");
+
+        lblSegR1.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
+        lblSegR1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblSegR1.setText("Tempo Morte Súbita :");
+        lblSegR1.setToolTipText("");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -290,94 +309,121 @@ public final class Parametros extends JDialog {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnSalvar, javax.swing.GroupLayout.DEFAULT_SIZE, 91, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(lblMinR, javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(lblSegR, javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(lblMinIntervalo, javax.swing.GroupLayout.Alignment.TRAILING))
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(lblSegIntervalo, javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(lblQtdRounds, javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(lblLogo, javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(lblNomEntidade, javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(lblSerialEquipamento, javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(lblPortaCom, javax.swing.GroupLayout.Alignment.TRAILING)))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(fldQuantidadeRounds)
-                            .addComponent(fldSegundosIntervalo)
-                            .addComponent(fldMinutosIntervalo)
-                            .addComponent(fldSegundosRound, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(fldMinutosRound, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(selectCom, javax.swing.GroupLayout.PREFERRED_SIZE, 393, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(btnConectar)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnDesconectar))
-                            .addComponent(fldNumeroSerie, javax.swing.GroupLayout.PREFERRED_SIZE, 393, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(fldNomeEntidade, javax.swing.GroupLayout.PREFERRED_SIZE, 393, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(lblSegR1)
+                                        .addGap(18, 18, 18))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addContainerGap()
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(lblMinR)
+                                            .addComponent(lblQtdRounds))
+                                        .addGap(18, 18, 18)))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(fldQuantidadeRounds)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(fldMinutosRound, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(fldMinutosMorteSubita, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                            .addComponent(lblMinR2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addComponent(lblMinR1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addComponent(lblMinR3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(fldSegundosRound, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(fldSegundosMorteSubita, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(fldMinutosMorteSubita, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(fldSegundosMorteSubita, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addContainerGap()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(lblMinIntervalo)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(fldMinutosIntervalo)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(fldSegundosIntervalo))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(lblLogo, javax.swing.GroupLayout.Alignment.TRAILING)
+                                            .addComponent(lblNomEntidade, javax.swing.GroupLayout.Alignment.TRAILING)
+                                            .addComponent(lblSerialEquipamento, javax.swing.GroupLayout.Alignment.TRAILING)
+                                            .addComponent(lblPortaCom, javax.swing.GroupLayout.Alignment.TRAILING))
+                                        .addGap(18, 18, 18)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addComponent(selectCom, javax.swing.GroupLayout.PREFERRED_SIZE, 393, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addComponent(btnConectar)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(btnDesconectar))
+                                            .addComponent(fldNumeroSerie, javax.swing.GroupLayout.PREFERRED_SIZE, 393, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(fldNomeEntidade, javax.swing.GroupLayout.PREFERRED_SIZE, 393, javax.swing.GroupLayout.PREFERRED_SIZE))))))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(lblSegR)
+                .addGap(18, 18, 18)
+                .addComponent(fldMaximoFaltas, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {lblLogo, lblMinIntervalo, lblMinR, lblNomEntidade, lblPortaCom, lblQtdRounds, lblSegIntervalo, lblSegR, lblSerialEquipamento});
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {lblLogo, lblMinIntervalo, lblMinR, lblNomEntidade, lblPortaCom, lblQtdRounds, lblSegR, lblSegR1, lblSerialEquipamento});
 
-        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {fldMinutosIntervalo, fldMinutosRound, fldQuantidadeRounds, fldSegundosIntervalo, fldSegundosRound});
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {fldMaximoFaltas, fldMinutosIntervalo, fldMinutosMorteSubita, fldMinutosRound, fldQuantidadeRounds, fldSegundosIntervalo, fldSegundosMorteSubita, fldSegundosRound});
 
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblMinR, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE)
-                    .addComponent(fldMinutosRound, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(lblMinR)
+                    .addComponent(fldMinutosRound, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(fldSegundosRound, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblMinR1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblSegR, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE)
-                    .addComponent(fldSegundosRound, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(fldMinutosIntervalo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(fldSegundosIntervalo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(lblMinR2, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(lblMinIntervalo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(lblMinIntervalo, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 283, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(fldMinutosIntervalo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(lblSegIntervalo, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE)
-                            .addComponent(fldSegundosIntervalo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(lblQtdRounds, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(fldQuantidadeRounds, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lblLogo, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(lblNomEntidade, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE)
-                            .addComponent(fldNomeEntidade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(lblSerialEquipamento, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(fldNumeroSerie, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(btnConectar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(lblPortaCom, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(selectCom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(btnDesconectar, javax.swing.GroupLayout.DEFAULT_SIZE, 36, Short.MAX_VALUE))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(fldMinutosMorteSubita, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(fldSegundosMorteSubita, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(20, 20, 20)))
+                    .addComponent(fldMinutosMorteSubita, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblSegR1, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblMinR3, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(fldSegundosMorteSubita, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblQtdRounds, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(fldQuantidadeRounds, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblSegR, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(fldMaximoFaltas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblLogo, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblNomEntidade, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(fldNomeEntidade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblSerialEquipamento, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(fldNumeroSerie, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(btnConectar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(lblPortaCom, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(selectCom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnDesconectar, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(48, 48, 48)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnCancelar)
                     .addComponent(btnSalvar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -386,9 +432,9 @@ public final class Parametros extends JDialog {
 
         layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {lblPortaCom, selectCom});
 
-        layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {fldMinutosIntervalo, fldMinutosRound, fldNomeEntidade, fldNumeroSerie, fldQuantidadeRounds, fldSegundosIntervalo, fldSegundosRound, lblSerialEquipamento});
+        layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {fldMaximoFaltas, fldMinutosIntervalo, fldMinutosMorteSubita, fldMinutosRound, fldNomeEntidade, fldNumeroSerie, fldQuantidadeRounds, fldSegundosIntervalo, fldSegundosMorteSubita, fldSegundosRound, lblMinIntervalo, lblMinR, lblMinR1, lblSegR1, lblSerialEquipamento});
 
-        layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {lblLogo, lblQtdRounds});
+        layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {lblLogo, lblQtdRounds, lblSegR});
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -654,12 +700,21 @@ public final class Parametros extends JDialog {
         this.segundosmorteSubita = segundosmorteSubita;
     }
 
+    public String getQtdMaximaFaltas() {
+        return qtdMaximaFaltas;
+    }
+
+    public void setQtdMaximaFaltas(String qtdMaximaFaltas) {
+        this.qtdMaximaFaltas = qtdMaximaFaltas;
+    }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnConectar;
     private javax.swing.JButton btnDesconectar;
     private javax.swing.JButton btnSalvar;
+    private javax.swing.JTextField fldMaximoFaltas;
     private javax.swing.JTextField fldMinutosIntervalo;
     private javax.swing.JTextField fldMinutosMorteSubita;
     private javax.swing.JTextField fldMinutosRound;
@@ -674,11 +729,14 @@ public final class Parametros extends JDialog {
     private javax.swing.JLabel lblLogo;
     private javax.swing.JLabel lblMinIntervalo;
     private javax.swing.JLabel lblMinR;
+    private javax.swing.JLabel lblMinR1;
+    private javax.swing.JLabel lblMinR2;
+    private javax.swing.JLabel lblMinR3;
     private javax.swing.JLabel lblNomEntidade;
     private javax.swing.JLabel lblPortaCom;
     private javax.swing.JLabel lblQtdRounds;
-    private javax.swing.JLabel lblSegIntervalo;
     private javax.swing.JLabel lblSegR;
+    private javax.swing.JLabel lblSegR1;
     private javax.swing.JLabel lblSerialEquipamento;
     private javax.swing.JComboBox selectCom;
     // End of variables declaration//GEN-END:variables

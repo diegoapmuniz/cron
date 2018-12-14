@@ -761,8 +761,16 @@ public class Cron extends javax.swing.JFrame {
         blueFaltaContador.setText("0");
         redPontuacao.setText("0");
         bluePontuacao.setText("0");
-        int minutosInt = Integer.parseInt(minutosRound);
-        int segundosInt = Integer.parseInt(segundosRound);
+        int minutosInt = 0;
+        int segundosInt = 0;
+        if(minutosRound != null && !minutosRound.isEmpty()){
+            minutosInt = Integer.parseInt(minutosRound);
+        } 
+        if(segundosRound!= null && !segundosRound.isEmpty()){
+            segundosInt = Integer.parseInt(segundosRound);
+        }
+                
+         
         String min = minutosInt <= 9 ? "0" + minutosInt : minutosInt + "";
         String seg = segundosInt <= 9 ? "0" + segundosInt : segundosInt + "";
         lblMinutoTimer.setText(min);

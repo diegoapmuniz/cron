@@ -23,5 +23,6 @@ public class Constantes {
     public static String VAR_NOME_COMUNICACAO_SERIAL = "diserial";
     public static String VAR_MINUTOS_MORTE_SUBITA = "MINUTOSMS";
     public static String VAR_SEGUNDOS_MORTE_SUBITA = "SEGUNDOSMS";
+    public static String VAR_QUANTIDADE_MAX_FALTAS = "MAXFALTAS";
     
 }
