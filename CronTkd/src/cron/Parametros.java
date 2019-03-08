@@ -6,29 +6,37 @@
 package cron;
 
 import entidades.Parameter;
+import gnu.io.CommPortIdentifier;
+import gnu.io.PortInUseException;
+import gnu.io.SerialPort;
+import gnu.io.SerialPortEvent;
+import gnu.io.SerialPortEventListener;
+import gnu.io.UnsupportedCommOperationException;
+import java.awt.Component;
+import java.awt.HeadlessException;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.comm.CommPortIdentifier;
-import javax.comm.SerialPort;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.WindowConstants;
 import util.Constantes;
 import util.ControlePorta;
+import util.Mensagens;
 
 /**
  *
  * @author Diego Muniz <diego2605@gmail.com>
  */
-public final class Parametros extends JDialog {
+public final class Parametros extends JDialog implements Runnable, SerialPortEventListener {
 
     public int teste = 10;
     public String minutosRound;
@@ -49,7 +57,16 @@ public final class Parametros extends JDialog {
     private CommPortIdentifier com;
     //private ControlePorta arduino;
     SerialPort portaSerial;
-    private ControlePorta controle;
+    public Cron cronometro;
+    //private ControlePorta controle;
+
+    public Cron getCronometro() {
+        return cronometro;
+    }
+
+    public void setCronometro(Cron cronometro) {
+        this.cronometro = cronometro;
+    }
     
 
     public int getTeste() {
@@ -153,6 +170,7 @@ public final class Parametros extends JDialog {
         }
 
     }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -504,61 +522,19 @@ public final class Parametros extends JDialog {
         this.dispose();
 
     }//GEN-LAST:event_btnSalvarActionPerformed
-    public void abrePortaCom() {
-        /* String porta = selectCom.getSelectedItem().toString();
-
-    
-    
-         try{
-         com = CommPortIdentifier.getPortIdentifier(porta);
-         int timeout = 6000;
    
-         portaSerial = (SerialPort)com.open("PlacaSensoriamento",timeout);
-         JOptionPane.showMessageDialog(null, "Configurando Porta Serial");
-         portaSerial.setSerialPortParams(baudRate, portaSerial.DATABITS_8, portaSerial.STOPBITS_1, portaSerial.PARITY_NONE);
-         }
-
-         catch (NoSuchPortException nspe){
-         System.err.println("Porta não existe! : " + porta);
-         JOptionPane.showMessageDialog(this,"Porta não existe!","Erro ao Abrir Porta Serial", JOptionPane.ERROR_MESSAGE); 
-          
-
-         }
-
-         catch (PortInUseException piu){
-         System.err.println("Porta ja esta aberta!");
-         JOptionPane.showMessageDialog(this,"Porta ja esta aberta!","Erro ao Abrir Porta Serial", JOptionPane.ERROR_MESSAGE); 
-         }
-
-         catch (UnsupportedCommOperationException uscoe){
-    
-         System.err.println("Configuração dos parametros da porta não suportada!");
-         JOptionPane.showMessageDialog(this,"Configuração dos parametros da porta não suportada!","Erro ao Abrir Porta Serial", JOptionPane.ERROR_MESSAGE); 
-         }*/
-    }
 
 
     private void btnConectarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConectarActionPerformed
-        //abrePortaCom();
-        if (controle != null) {
-            SerialPort porta = controle.getPortHist();
-            porta.close();
-            controle.getPortHist().close();
-
-        }
-
-        controle = new ControlePorta(selectCom.getSelectedItem().toString(), 9600);
+         
+   initialize();
+        
 
     }//GEN-LAST:event_btnConectarActionPerformed
 
     private void btnDesconectarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDesconectarActionPerformed
-        controle.close();
-        portaSerial.close();
-        try {
-            serialOut.close();
-        } catch (IOException ex) {
-            Logger.getLogger(Parametros.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        FecharCom();
+        
         JOptionPane.showMessageDialog(null, "Porta serial fechada");
     }//GEN-LAST:event_btnDesconectarActionPerformed
 
@@ -603,6 +579,312 @@ public final class Parametros extends JDialog {
             }
         });
     }
+    
+    
+    //Inicio Diego 07/03/2019
+ 
+  private InputStream serialIn;
+  private int taxa = Constantes.VAR_TAXA_SERIAL;
+  private String portaCOM;
+  private SerialPort port;
+  public SerialPort portHist;
+  private Component Parametros;
+  protected String peso;
+  private InputStream entrada;
+
+    public String getPeso() {
+        return peso;
+    }
+
+    public void setPeso(String peso) {
+        this.peso = peso;
+    }
+
+    public SerialPort getPortHist() {
+        return portHist;
+    }
+
+    public void setPortHist(SerialPort portHist) {
+        this.portHist = portHist;
+    }
+  public String nomeConexao = Constantes.VAR_NOME_COMUNICACAO_SERIAL;
+
+ 
+ 
+  /**
+   * Médoto que verifica se a comunicação com a porta serial está ok
+   */
+  private void initialize() {
+    try {
+        portaCom = selectCom.getSelectedItem().toString();
+      //Define uma variável portId do tipo CommPortIdentifier para realizar a comunicação serial
+      CommPortIdentifier portId = null;
+      try {
+        //Tenta verificar se a porta COM informada existe
+        portId = CommPortIdentifier.getPortIdentifier(selectCom.getSelectedItem().toString());
+      }catch (Exception npe) {
+        //Caso a porta COM não exista será exibido um erro 
+        JOptionPane.showMessageDialog(Parametros, Mensagens.msgFalhaEncontrarSerial,Mensagens.lblTituloFalhaEncontrarSerial, JOptionPane.ERROR_MESSAGE); 
+
+      }
+      SerialPort teste = getPortHist();
+    //Abre a porta COM 
+      if(port != null){
+         portId = null;
+      }
+      boolean portaAberta = portId.isCurrentlyOwned();
+      String owner = portId.getCurrentOwner();
+      if((portaAberta)&&(!nomeConexao.equals(owner))){
+       
+       port.close();
+       portId = null;
+      }
+      if(portaAberta){
+          port.close();
+       // port(portId);
+      }else{
+      taxa = Constantes.VAR_TAXA_SERIAL;
+      port = (SerialPort) portId.open(nomeConexao, this.taxa);
+      serialOut = port.getOutputStream();
+      port.setSerialPortParams(this.taxa, //taxa de transferência da porta serial 
+                               SerialPort.DATABITS_8, //taxa de 10 bits 8 (envio)
+                               SerialPort.STOPBITS_1, //taxa de 10 bits 1 (recebimento)
+                               SerialPort.PARITY_NONE); //receber e enviar dados
+          setPortHist(port);
+          JOptionPane.showMessageDialog(Parametros, Mensagens.msgConexaoPortaSucesso,"", JOptionPane.INFORMATION_MESSAGE); 
+          
+          //Diego 04/03/2019
+          LerDados(port);
+     
+      }
+    }catch (HeadlessException | IOException | PortInUseException | UnsupportedCommOperationException e) {
+      e.printStackTrace();
+    }
+}
+ 
+  /**
+   * Método que fecha a comunicação com a porta serial
+   */
+  public void close() {
+      FecharCom();
+  }
+ 
+  /**
+   * @param opcao - Valor a ser enviado pela porta serial
+   */
+  public void enviaDados(int opcao){
+    try {
+      serialOut.write(opcao);//escreve o valor na porta serial para ser enviado
+    } catch (IOException ex) {
+        JOptionPane.showMessageDialog(null, "Não foi possível enviar o dado. ",
+                "Enviar dados", JOptionPane.PLAIN_MESSAGE);
+    }
+  } 
+  
+  
+  //Diego 04/03/2019
+  
+
+  private Thread threadLeitura;
+  
+  public void LerDados(SerialPort porta){
+        boolean Escrita = false;
+        
+        
+        if (Escrita == false){
+
+            try {
+
+                entrada = porta.getInputStream();
+
+            } catch (Exception e) {
+
+                System.out.println("Erro de stream: " + e);
+
+                System.exit(1);
+
+            }
+
+            try {
+
+                porta.addEventListener(this);
+
+            } catch (Exception e) {
+
+                System.out.println("Erro de listener: " + e);
+
+                System.exit(1);
+
+            }
+
+            porta.notifyOnDataAvailable(true);
+
+            try {
+
+                threadLeitura = new Thread( this);
+
+                threadLeitura.start();
+                System.out.println("Thread Iniciada: "+ threadLeitura.getState().toString());
+                
+               run();
+
+            } catch (Exception e) {
+
+                System.out.println("Erro de Thred: " + e);
+
+            }
+
+        }
+        
+        
+
+}
+ 
+  public void FecharCom(){
+
+            try {
+
+                port.close();
+                stop();
+
+            } catch (Exception e) {
+
+                System.out.println("Erro fechando porta: " + e);
+
+                System.exit(0);
+
+            }
+
+}
+  
+  @Override
+  public void serialEvent(SerialPortEvent ev){       
+
+        StringBuffer bufferLeitura = new StringBuffer();
+
+        int novoDado = 0;
+
+       
+
+        switch (ev.getEventType()) {
+
+            case SerialPortEvent.BI:
+
+            case SerialPortEvent.OE:
+
+            case SerialPortEvent.FE:
+
+            case SerialPortEvent.PE:
+
+            case SerialPortEvent.CD:
+
+            case SerialPortEvent.CTS:
+
+            case SerialPortEvent.DSR:
+
+            case SerialPortEvent.RI:
+
+            case SerialPortEvent.OUTPUT_BUFFER_EMPTY:
+
+            break;
+
+            case SerialPortEvent.DATA_AVAILABLE:
+
+                //Novo algoritmo de leitura.
+
+                while(novoDado != -1){
+
+                    try{
+
+                        novoDado = entrada.read();
+
+                        if(novoDado == -1){
+
+                            break;
+
+                        }
+
+                        if('\r' == (char)novoDado){
+
+                            bufferLeitura.append('\n');
+
+                        }else{
+
+                            bufferLeitura.append((char)novoDado);
+
+                        }
+
+                    }catch(IOException ioe){
+
+                        System.out.println("Erro de leitura serial: " + ioe);
+
+                    }
+
+                }
+
+         
+                
+                       
+                        
+                        System.out.println("Teste: "+(new String(bufferLeitura)));
+                        cronometro.btnBlueMaisUm.doClick();
+
+               
+              
+            
+                   
+
+            break;
+
+        }
+
+} 
+  
+  
+  public void run(){
+
+        try {
+
+            Thread.sleep(5);
+
+        } catch (Exception e) {
+
+            System.out.println("Erro de Thred: " + e);
+
+        }
+
+}
+
+  
+  public void stop(){
+
+        try {
+
+            threadLeitura.interrupt();
+  
+
+        } catch (Exception e) {
+
+            System.out.println("Erro de Thred: " + e);
+
+        }
+
+}
+  
+  
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
     public String getMinutosRound() {
         return minutosRound;

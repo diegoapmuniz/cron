@@ -5,27 +5,41 @@ package util;
  * @author Diego Muniz <diego2605@gmail.com>
  */
 
-
  
+import cron.Cron;
 import cron.Parametros;
 import java.awt.Component;
 import java.awt.HeadlessException;
-import javax.comm.CommPortIdentifier;
-import javax.comm.NoSuchPortException;
-import javax.comm.SerialPort;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
-import javax.comm.PortInUseException;
-import javax.comm.UnsupportedCommOperationException;
 import javax.swing.JOptionPane;
+import gnu.io.CommPortIdentifier;
+import gnu.io.PortInUseException;
+import gnu.io.SerialPort;
+import gnu.io.SerialPortEvent;
+import gnu.io.SerialPortEventListener;
+import gnu.io.UnsupportedCommOperationException;
+
  
-public class ControlePorta {
+public class ControlePorta implements Runnable,SerialPortEventListener {
   private OutputStream serialOut;
-  private int taxa;
+  private InputStream serialIn;
+  private int taxa = Constantes.VAR_TAXA_SERIAL;
   private String portaCOM;
   private SerialPort port;
   public SerialPort portHist;
   private Component Parametros;
+  protected String peso;
+  private InputStream entrada;
+
+    public String getPeso() {
+        return peso;
+    }
+
+    public void setPeso(String peso) {
+        this.peso = peso;
+    }
 
     public SerialPort getPortHist() {
         return portHist;
@@ -57,7 +71,7 @@ public class ControlePorta {
       try {
         //Tenta verificar se a porta COM informada existe
         portId = CommPortIdentifier.getPortIdentifier(this.portaCOM);
-      }catch (NoSuchPortException npe) {
+      }catch (Exception npe) {
         //Caso a porta COM não exista será exibido um erro 
         JOptionPane.showMessageDialog(Parametros, Mensagens.msgFalhaEncontrarSerial,Mensagens.lblTituloFalhaEncontrarSerial, JOptionPane.ERROR_MESSAGE); 
 
@@ -78,6 +92,7 @@ public class ControlePorta {
           port.close();
        // port(portId);
       }else{
+      taxa = Constantes.VAR_TAXA_SERIAL;
       port = (SerialPort) portId.open(nomeConexao, this.taxa);
       serialOut = port.getOutputStream();
       port.setSerialPortParams(this.taxa, //taxa de transferência da porta serial 
@@ -87,6 +102,8 @@ public class ControlePorta {
           setPortHist(port);
           JOptionPane.showMessageDialog(Parametros, Mensagens.msgConexaoPortaSucesso,"", JOptionPane.INFORMATION_MESSAGE); 
           
+          //Diego 04/03/2019
+          LerDados(port);
      
       }
     }catch (HeadlessException | IOException | PortInUseException | UnsupportedCommOperationException e) {
@@ -98,12 +115,7 @@ public class ControlePorta {
    * Método que fecha a comunicação com a porta serial
    */
   public void close() {
-    try {
-        serialOut.close();
-    }catch (IOException e) {
-      JOptionPane.showMessageDialog(null, Mensagens.msgFalhaDesconectarSerial,
-                Mensagens.lblTituloFecharSerial, JOptionPane.PLAIN_MESSAGE);
-    }
+      FecharCom();
   }
  
   /**
@@ -117,5 +129,195 @@ public class ControlePorta {
                 "Enviar dados", JOptionPane.PLAIN_MESSAGE);
     }
   } 
+  
+  
+  //Diego 04/03/2019
+  
+
+  private Thread threadLeitura;
+  
+  public void LerDados(SerialPort porta){
+        boolean Escrita = false;
+        
+        
+        if (Escrita == false){
+
+            try {
+
+                entrada = porta.getInputStream();
+
+            } catch (Exception e) {
+
+                System.out.println("Erro de stream: " + e);
+
+                System.exit(1);
+
+            }
+
+            try {
+
+                porta.addEventListener(this);
+
+            } catch (Exception e) {
+
+                System.out.println("Erro de listener: " + e);
+
+                System.exit(1);
+
+            }
+
+            porta.notifyOnDataAvailable(true);
+
+            try {
+
+                threadLeitura = new Thread( this);
+
+                threadLeitura.start();
+                
+               run();
+
+            } catch (Exception e) {
+
+                System.out.println("Erro de Thred: " + e);
+
+            }
+
+        }
+        
+        
+
+}
+ 
+  public void FecharCom(){
+
+            try {
+
+                port.close();
+                stop();
+
+            } catch (Exception e) {
+
+                System.out.println("Erro fechando porta: " + e);
+
+                System.exit(0);
+
+            }
+
+}
+  
+  @Override
+  public void serialEvent(SerialPortEvent ev){       
+
+        StringBuffer bufferLeitura = new StringBuffer();
+
+        int novoDado = 0;
+
+       
+
+        switch (ev.getEventType()) {
+
+            case SerialPortEvent.BI:
+
+            case SerialPortEvent.OE:
+
+            case SerialPortEvent.FE:
+
+            case SerialPortEvent.PE:
+
+            case SerialPortEvent.CD:
+
+            case SerialPortEvent.CTS:
+
+            case SerialPortEvent.DSR:
+
+            case SerialPortEvent.RI:
+
+            case SerialPortEvent.OUTPUT_BUFFER_EMPTY:
+
+            break;
+
+            case SerialPortEvent.DATA_AVAILABLE:
+
+                //Novo algoritmo de leitura.
+
+                while(novoDado != -1){
+
+                    try{
+
+                        novoDado = entrada.read();
+
+                        if(novoDado == -1){
+
+                            break;
+
+                        }
+
+                        if('\r' == (char)novoDado){
+
+                            bufferLeitura.append('\n');
+
+                        }else{
+
+                            bufferLeitura.append((char)novoDado);
+
+                        }
+
+                    }catch(IOException ioe){
+
+                        System.out.println("Erro de leitura serial: " + ioe);
+
+                    }
+
+                }
+
+         
+                
+                       
+                        
+                        System.out.println("Teste: "+(new String(bufferLeitura)));
+
+               
+              
+            
+                   
+
+            break;
+
+        }
+
+} 
+  
+  
+  public void run(){
+
+        try {
+
+            Thread.sleep(5);
+
+        } catch (Exception e) {
+
+            System.out.println("Erro de Thred: " + e);
+
+        }
+
+}
+
+  
+  public void stop(){
+
+        try {
+
+            threadLeitura.interrupt();
+  
+
+        } catch (Exception e) {
+
+            System.out.println("Erro de Thred: " + e);
+
+        }
+
+}
+  
+  
 
 }

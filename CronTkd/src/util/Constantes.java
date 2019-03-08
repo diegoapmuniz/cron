@@ -25,4 +25,6 @@ public class Constantes {
     public static String VAR_SEGUNDOS_MORTE_SUBITA = "SEGUNDOSMS";
     public static String VAR_QUANTIDADE_MAX_FALTAS = "MAXFALTAS";
     
+    public static int VAR_TAXA_SERIAL = 115200;
+    
 }
